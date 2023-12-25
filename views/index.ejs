@@ -1,0 +1,103 @@
+<%- include('partials/header.ejs'); -%>
+<header>
+    <h1>Book Ratings and Notes</h1>
+    <p>A small summary, <strong>but detailed notes for each book I've read.</strong>
+    Use the ISBN number to find the books. <strong>This page is updated very month.</strong></p>
+</header>
+<p>Sorted By 
+    <a href="/?sort=date" id="sort-date">Date</a>
+    <a href="/?sort=rating" id="sort-rating">Rating</a>
+</p>
+<hr>
+<section id="books">
+    <div class="box">
+        <% for(let book of books){%>
+          <div class="book">
+            <form action="/delete" method="post">
+                <input type="hidden" name="deleteBookISBN" value="<%= book.isbn %>">
+                <button class="delete" type="submit">Delete</button>
+            </form>
+    
+              <p>
+                <div class="cover_picture">
+                <img src="<%= book.cover %>" alt="Book Cover" /><br>
+                </div>
+                <div class="details">
+                ISBN: <%= book.isbn %><br>
+                Title: <%= book.title %><br>
+                Date: <%= book.date %><br>
+                Rating: <%= book.rating %><br>
+                Summary: <%= book.summary %>
+              </div>
+              </p>
+    
+              <form class="edit" action="/update" method="post" style="display: none;">
+                <label for="updatedBookTitle">Title:</label>
+                <input type="hidden" name="updatedBookISBN" value="<%= book.isbn %>" autocomplete="off" required />
+                <input type="text" name="updatedBookTitle" value="<%= book.title %>" autocomplete="off" required />
+                <br>
+
+                <label for="updatedBookDate">Date:</label>
+                <input type="date" name="updatedBookDate" value="<%= book.date %>" required />
+                <br>
+
+                <label for="updatedBookRating">Rating:</label>
+                <input type="number" name="updatedBookRating" value="<%= book.rating %>" min="0" max="10" required />
+                <br>
+
+                <label for="updatedBookSummary">Summary:</label>
+                <textarea name="updatedBookSummary" rows="4" required><%= book.summary %></textarea>
+                <br>
+
+                <button id="done<%=book.isbn%>" class="edit" type="submit">
+                    <label class="checkLabel" for="done<%=book.isbn%>">Complete</label>
+                    <img class="icon" src="/assets/check-solid.svg" alt="tick image">
+                    
+                </button>
+            </form>
+            <button id="edit<%= book.isbn %>" class="edit" onclick="handler('<%= book.isbn %>')">
+                <img class="icon" src="/assets/pencil-solid.svg" alt="pencil image">
+            </button>
+          </div>
+          <% } %>
+
+          <form class="book" action="/create" method="post">
+            <input type="text" name="newBookISBN" placeholder="ISBN Number" autocomplete="off" required="">
+            <input type="text" name="newBookTitle" placeholder="Book Title" autocomplete="off" required="">
+            <input type="date" name="newBookDate" placeholder="Date" required="">
+            <input type="number" name="newBookRating" placeholder="Rating" min="0" max="10" required="">
+            <textarea name="newBookSummary" placeholder="Summary" rows="4" required=""></textarea>
+            <button class="butn" type="submit" name="list" value="Your" list="" title="">+</button>
+        </form>
+        
+      </div>
+    
+      <script>
+          const showAddForm = () => {
+        const form = document.querySelector('.book');
+        if (form.style.display === 'block') {
+            form.style.display = 'none';
+        } else {
+            form.style.display = 'block';
+        }
+    };
+
+    const addBookButton = document.getElementById('showAddForm');
+    addBookButton.addEventListener('click', showAddForm);
+
+    function handler(id) {
+        const editForm = document.querySelector(`form.edit input[name="updatedBookISBN"][value="${id}"]`).parentNode;
+        const editButton = document.getElementById(`edit${id}`);
+
+        if (editForm.style.display === 'none') {
+            editForm.style.display = 'block';
+            editButton.style.display = 'none';
+        } else {
+            editForm.style.display = 'none';
+            editButton.style.display = 'block';
+        }
+    }
+      </script>
+</section>
+<%- include('partials/footer.ejs'); -%>
+  
